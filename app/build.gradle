@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace 'id.fauzancode.runningtrackerapp'
-    compileSdk 29
+    compileSdk 33
 
     defaultConfig {
         applicationId "id.fauzancode.runningtrackerapp"
         minSdk 24
-        targetSdk 29
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 

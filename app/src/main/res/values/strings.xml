@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">RunningTrackerApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="today_progress">Today Progress</string>
+    <string name="text_title"><![CDATA[Become Healthy & stay resilent]]></string>
+</resources>

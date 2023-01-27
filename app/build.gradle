@@ -1,0 +1,101 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    namespace 'id.fauzancode.runningtrackerapp'
+    compileSdk 29
+
+    defaultConfig {
+        applicationId "id.fauzancode.runningtrackerapp"
+        minSdk 24
+        targetSdk 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures{
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    def room_version = "2.5.0"
+    def nav_version = "2.5.3"
+    def google_maps_version = "21.0.1"
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Architectural Components
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5'
+
+    // Coroutine Lifecycle Scopes
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
+
+    // Navigation component
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    //Dagger - Hilt
+    implementation 'com.google.dagger:hilt-android:2.44.2'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.44.2'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+
+    // Google Maps Location Services
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation "com.google.android.gms:play-services-maps:18.1.0"
+    implementation 'com.google.maps.android:maps-ktx:3.4.0'
+    implementation 'com.google.maps.android:maps-utils-ktx:3.4.0'
+
+    // MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+
+    // Easy Permissions
+    implementation 'pub.devrel:easypermissions:3.0.0'
+
+    // Activity KTX for viewModels()
+    implementation "androidx.activity:activity-ktx:1.1.0"
+}

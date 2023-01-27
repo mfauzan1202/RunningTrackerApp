@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Default_Text_Style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textColor">@color/black_2</item>
+    </style>
+    
+    <style name="RoundedCorner">
+        <item name="cornerSize">12dp</item>
+    </style>
+</resources>

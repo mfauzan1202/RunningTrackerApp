@@ -62,7 +62,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:paddingHorizontal="20dp"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +71,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="20dp">
+            android:paddingBottom="20dp"
+            android:paddingHorizontal="20dp">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -87,18 +87,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_startRun"
+                style="@style/Default_Text_Style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cornerRadius="12dp"
                 android:layout_marginTop="20dp"
-                android:paddingHorizontal="40dp"
                 android:backgroundTint="@color/gray"
+                android:paddingHorizontal="40dp"
+                android:text="Let's Go Run"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle"
-                style="@style/Default_Text_Style"
-                android:textStyle="bold"
-                android:text="Let's Go Run"/>
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_filter"
@@ -131,6 +131,65 @@
                 app:shapeAppearanceOverlay="@style/RoundedCorner"
                 tools:src="@tools:sample/avatars" />
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginBottom="12dp"
+                android:elevation="2dp"
+                app:cardCornerRadius="20dp"
+                app:cardPreventCornerOverlap="false"
+                app:layout_constraintBottom_toBottomOf="@id/iv_snapshotRun"
+                app:layout_constraintEnd_toEndOf="@id/iv_snapshotRun"
+                app:layout_constraintStart_toStartOf="@id/iv_snapshotRun">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_titleTotalRun"
+                        style="@style/Default_Text_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Run KM this days"
+                        android:textColor="@color/gray_3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_totalDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:includeFontPadding="false"
+                        android:text="19.45"
+                        android:textColor="@color/black_2"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/textView"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_titleTotalRun" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        style="@style/Default_Text_Style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_totalDistance" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,10 +210,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_snapshotRun" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:minWidth="0dp"
+                android:paddingHorizontal="0dp"
+                android:text="See All"
+                android:textColor="@color/gray_3"
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_todayProgress"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:drawableEnd="@drawable/ic_arrow_right"
+                app:layout_constraintTop_toTopOf="@id/tv_todayProgress" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="-20dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"

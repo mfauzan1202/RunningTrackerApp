@@ -41,7 +41,7 @@ android {
 
 dependencies {
 
-    def room_version = "2.5.0"
+    def room_version = "2.4.0"
     def nav_version = "2.5.3"
     def google_maps_version = "21.0.1"
 

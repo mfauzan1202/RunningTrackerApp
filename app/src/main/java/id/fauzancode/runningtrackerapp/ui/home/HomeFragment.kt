@@ -2,7 +2,10 @@ package id.fauzancode.runningtrackerapp.ui.home
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -11,10 +14,12 @@ import com.google.android.material.snackbar.Snackbar
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.databinding.FragmentHomeBinding
 
+
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
     //ini yang perlu km gunakan untuk request permission
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -43,7 +48,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     }.show()
                 }
                 map["EXPLAINED"]?.let {
-                    //request denied ,send to settings
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", activity?.packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
                 }
             }
             else -> {

@@ -2,5 +2,5 @@
     <string name="app_name">RunningTrackerApp</string>
     <string name="today_progress">Today Progress</string>
     <string name="text_title"><![CDATA[Become Healthy & stay resilent]]></string>
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">PLACE YOUR API KEY HERE</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAsDyPdzdpU7tQVUehybr3i1--kJeWsP4Q</string>
 </resources>

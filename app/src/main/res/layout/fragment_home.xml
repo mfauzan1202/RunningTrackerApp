@@ -93,7 +93,7 @@
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/gray"
                 android:paddingHorizontal="40dp"
-                android:text="Let's Go Run"
+                android:text="@string/let_s_go_run"
                 android:textStyle="bold"
                 app:cornerRadius="12dp"
                 app:layout_constraintEnd_toEndOf="parent"

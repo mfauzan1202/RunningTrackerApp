@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.databinding.FragmentTrackingBinding
@@ -40,6 +41,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                requireContext(),
+                R.raw.custom_map
+            )
+        )
         map = googleMap
 
         binding.btnRun.setOnClickListener {
@@ -62,7 +69,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
         binding.apply {
-            if(!isTracking) {
+            if (!isTracking) {
                 binding.btnRun.setImageResource(R.drawable.ic_start)
                 btnFinishRun.visibility = View.VISIBLE
             } else {
@@ -83,7 +90,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
     }
 
     private fun moveCameraToUser() {
-        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()) {
+        if (pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()) {
             map?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     pathPoints.last().last(),
@@ -92,8 +99,9 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
             )
         }
     }
+
     private fun addAllPolylines() {
-        for(polyline in pathPoints) {
+        for (polyline in pathPoints) {
             val polylineOptions = PolylineOptions()
                 .color(POLYLINE_COLOR)
                 .width(POLYLINE_WIDTH)
@@ -103,7 +111,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
     }
 
     private fun addLatestPolyline() {
-        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+        if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
             val lastLatLng = pathPoints.last().last()
             val polylineOptions = PolylineOptions()

@@ -5,4 +5,6 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAsDyPdzdpU7tQVUehybr3i1--kJeWsP4Q</string>
     <string name="let_s_go_run">Let\'s Go Run</string>
     <string name="finish_run">Finish Run</string>
+    <string name="time">Time</string>
+    <string name="time_format">00:00:00:00</string>
 </resources>

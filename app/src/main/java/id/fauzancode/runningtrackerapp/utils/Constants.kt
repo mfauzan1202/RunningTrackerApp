@@ -3,7 +3,7 @@ package id.fauzancode.runningtrackerapp.utils
 import android.graphics.Color
 
 object Constants {
-    const val ACTION_START = "ACTION_START"
+    const val ACTION_START_OR_RESUME_SERVICE = "ACTION_START_OR_RESUME_SERVICE"
     const val ACTION_STOP = "ACTION_STOP"
     const val ACTION_PAUSE = "ACTION_PAUSE"
 
@@ -13,4 +13,6 @@ object Constants {
 
     const val RUNNING_DATABASE_NAME = "runs_db"
     const val NOTIFICATION_ID = 1
+
+    const val TIMER_UPDATE_INTERVAL = 50L
 }

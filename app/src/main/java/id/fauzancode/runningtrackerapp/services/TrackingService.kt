@@ -14,14 +14,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_PAUSE
-import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START
+import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_STOP
 import id.fauzancode.runningtrackerapp.utils.Constants.NOTIFICATION_ID
+import id.fauzancode.runningtrackerapp.utils.Constants.TIMER_UPDATE_INTERVAL
 import id.fauzancode.runningtrackerapp.utils.DefaultLocationClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +30,15 @@ class TrackingService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: DefaultLocationClient
+    private val timeRunInSeconds = MutableLiveData<Long>()
+
+    var isFirstRun = true
+
+    private var isTimerEnabled = false
+    private var lapTime = 0L
+    private var timeRun = 0L
+    private var timeStarted = 0L
+    private var lastSecondTimestamp = 0L
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -49,11 +56,19 @@ class TrackingService : Service() {
     private fun postInitialValues() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        timeRunInSeconds.postValue(0L)
+        timeRunInMillis.postValue(0L)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> start()
+            ACTION_START_OR_RESUME_SERVICE ->
+                if (isFirstRun) {
+                    start()
+                    isFirstRun = false
+                } else {
+                    startTimer()
+                }
             ACTION_PAUSE -> pause()
             ACTION_STOP -> stop()
         }
@@ -61,7 +76,7 @@ class TrackingService : Service() {
     }
 
     private fun start() {
-        addEmptyPolyline()
+        startTimer()
         isTracking.postValue(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -109,6 +124,27 @@ class TrackingService : Service() {
         stopSelf()
     }
 
+    private fun startTimer() {
+        addEmptyPolyline()
+        isTracking.postValue(true)
+        timeStarted = System.currentTimeMillis()
+        isTimerEnabled = true
+        CoroutineScope(Dispatchers.Main).launch {
+            while (isTracking.value!!) {
+                // time difference between now and timeStarted
+                lapTime = System.currentTimeMillis() - timeStarted
+                // post the new lapTime
+                timeRunInMillis.postValue(timeRun + lapTime)
+                if (timeRunInMillis.value!! >= lastSecondTimestamp + 1000L) {
+                    timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
+                    lastSecondTimestamp += 1000L
+                }
+                delay(TIMER_UPDATE_INTERVAL)
+            }
+            timeRun += lapTime
+        }
+    }
+
     private fun addPathPoint(location: Location?) {
         location?.let {
             val pos = LatLng(location.latitude, location.longitude)
@@ -130,7 +166,7 @@ class TrackingService : Service() {
     }
 
     companion object {
-
+        val timeRunInMillis = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
     }

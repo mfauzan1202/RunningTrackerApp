@@ -14,10 +14,11 @@ import id.fauzancode.runningtrackerapp.databinding.FragmentTrackingBinding
 import id.fauzancode.runningtrackerapp.services.Polyline
 import id.fauzancode.runningtrackerapp.services.TrackingService
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_PAUSE
-import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START
+import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
 import id.fauzancode.runningtrackerapp.utils.Constants.MAP_ZOOM
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_COLOR
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_WIDTH
+import id.fauzancode.runningtrackerapp.utils.TrackingUtils
 
 class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallback {
 
@@ -27,6 +28,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
 
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
+
+    private var curTimeInMillis = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +67,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
             addLatestPolyline()
             moveCameraToUser()
         }
+
+        TrackingService.timeRunInMillis.observe(viewLifecycleOwner) {
+            curTimeInMillis = it
+            val formattedTime = TrackingUtils.getFormattedStopWatchTime(curTimeInMillis, true)
+            binding.tvTimer.text = formattedTime
+        }
     }
 
     private fun updateTracking(isTracking: Boolean) {
@@ -84,7 +93,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
             sendCommandToService(ACTION_PAUSE)
             false
         } else {
-            sendCommandToService(ACTION_START)
+            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
             true
         }
     }

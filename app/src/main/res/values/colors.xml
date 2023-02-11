@@ -18,4 +18,7 @@
     <color name="blue_background">#E8F7FE</color>
 
     <color name="white">#FFFFFFFF</color>
+
+    <color name="colorAccent">#FFE600</color>
+    <color name="red">#BF0606</color>
 </resources>

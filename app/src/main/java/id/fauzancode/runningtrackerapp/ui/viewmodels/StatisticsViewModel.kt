@@ -9,4 +9,6 @@ import javax.inject.Inject
 class StatisticsViewModel @Inject constructor(
     val mainRepository: MainRepository
 ) : ViewModel() {
+
+    val runSortedByDate = mainRepository.getAllRunsSortedByDate()
 }

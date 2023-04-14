@@ -71,6 +71,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             btnStartRun.setOnClickListener {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToTrackingFragment())
             }
+
+            btnSeeAll.setOnClickListener {
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToStatisticsFragment())
+            }
         }
     }
 

@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">RunningTrackerApp</string>
+    <string-array name="filter_options">
+        <item>Date</item>
+        <item>Time</item>
+        <item>Distance</item>
+        <item>Calories Burn</item>
+        <item>Speed</item>
+    </string-array>
     <string name="today_progress">Today Progress</string>
     <string name="text_title"><![CDATA[Become Healthy & stay resilent]]></string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAsDyPdzdpU7tQVUehybr3i1--kJeWsP4Q</string>

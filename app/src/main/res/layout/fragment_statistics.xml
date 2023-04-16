@@ -17,10 +17,11 @@
         app:theme="@style/ToolBarStyle">
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_circle_button_white"
             android:padding="8dp"
@@ -47,5 +48,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolBar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRuns"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barChart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_runs"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,10 +11,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.databinding.FragmentHomeBinding
 
-
+@AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null

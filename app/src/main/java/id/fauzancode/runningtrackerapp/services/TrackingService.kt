@@ -10,12 +10,12 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import id.fauzancode.runningtrackerapp.R
+import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_PAUSE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_STOP
+import id.fauzancode.runningtrackerapp.utils.Constants.NOTIFICATION_CHANNEL_ID
 import id.fauzancode.runningtrackerapp.utils.Constants.NOTIFICATION_ID
 import id.fauzancode.runningtrackerapp.utils.Constants.TIMER_UPDATE_INTERVAL
 import id.fauzancode.runningtrackerapp.utils.DefaultLocationClient
@@ -23,14 +23,23 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
+
+@AndroidEntryPoint
 class TrackingService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var locationClient: DefaultLocationClient
+
+    @Inject
+    lateinit var locationClient: DefaultLocationClient
+
     private val timeRunInSeconds = MutableLiveData<Long>()
+
+    @Inject
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
     var isFirstRun = true
 
@@ -40,6 +49,8 @@ class TrackingService : Service() {
     private var timeStarted = 0L
     private var lastSecondTimestamp = 0L
 
+    var serviceKilled = false
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -47,10 +58,7 @@ class TrackingService : Service() {
     override fun onCreate() {
         super.onCreate()
         postInitialValues()
-        locationClient = DefaultLocationClient(
-            applicationContext,
-            LocationServices.getFusedLocationProviderClient(applicationContext)
-        )
+        locationClient
     }
 
     private fun postInitialValues() {
@@ -81,19 +89,13 @@ class TrackingService : Service() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "location",
+                NOTIFICATION_CHANNEL_ID,
                 "Location",
                 NotificationManager.IMPORTANCE_LOW
             )
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-        val notification = NotificationCompat.Builder(this, "location")
-            .setContentTitle("Tracking location...")
-            .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setOngoing(true)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -102,17 +104,16 @@ class TrackingService : Service() {
             .getLocationUpdates(10000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val lat = location.latitude.toString().takeLast(3)
-                val long = location.longitude.toString().takeLast(3)
-                val updatedNotification = notification.setContentText(
-                    "Location: ($lat, $long)"
-                )
-                notificationManager.notify(NOTIFICATION_ID, updatedNotification.build())
-                addPathPoint(location)
+                if (!serviceKilled) {
+                    val updatedNotification = baseNotificationBuilder
+                        .setContentText("00:00:00")
+                    notificationManager.notify(NOTIFICATION_ID, updatedNotification.build())
+                    addPathPoint(location)
+                }
             }
             .launchIn(serviceScope)
 
-        startForeground(1, notification.build())
+        startForeground(1, baseNotificationBuilder.build())
     }
 
     private fun pause() {
@@ -120,6 +121,10 @@ class TrackingService : Service() {
     }
 
     private fun stop() {
+        serviceKilled = true
+        isFirstRun = true
+        pause()
+        postInitialValues()
         stopForeground(STOP_FOREGROUND_DETACH)
         stopSelf()
     }

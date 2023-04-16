@@ -4,22 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.databinding.FragmentTrackingBinding
 import id.fauzancode.runningtrackerapp.services.Polyline
 import id.fauzancode.runningtrackerapp.services.TrackingService
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_PAUSE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
+import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_STOP
 import id.fauzancode.runningtrackerapp.utils.Constants.MAP_ZOOM
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_COLOR
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_WIDTH
 import id.fauzancode.runningtrackerapp.utils.TrackingUtils
 
+@AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallback {
 
     private var _binding: FragmentTrackingBinding? = null
@@ -55,6 +60,10 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
         binding.btnRun.setOnClickListener {
             toggleRun()
         }
+
+        binding.btnCancelRun.setOnClickListener {
+            showCancelTrackingDialog()
+        }
     }
 
     private fun subscribeToObservers() {
@@ -81,9 +90,11 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
             if (!isTracking) {
                 binding.btnRun.setImageResource(R.drawable.ic_start)
                 btnFinishRun.visibility = View.VISIBLE
+                btnCancelRun.visibility = View.VISIBLE
             } else {
                 btnRun.setImageResource(R.drawable.ic_pause)
                 btnFinishRun.visibility = View.GONE
+                btnCancelRun.visibility = View.GONE
             }
         }
     }
@@ -107,6 +118,26 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
                 )
             )
         }
+    }
+
+    private fun showCancelTrackingDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+            .setTitle("Cancel the Run?")
+            .setMessage("Are you sure to cancel the current run and delete all its data?")
+            .setIcon(R.drawable.ic_delete)
+            .setPositiveButton("Yes") { _, _ ->
+                stopRun()
+            }
+            .setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
+    }
+
+    private fun stopRun() {
+        sendCommandToService(ACTION_STOP)
+        findNavController().popBackStack()
     }
 
     private fun addAllPolylines() {

@@ -9,17 +9,27 @@ import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.R
+import id.fauzancode.runningtrackerapp.adapters.HomeAdapter
 import id.fauzancode.runningtrackerapp.databinding.FragmentHomeBinding
+import id.fauzancode.runningtrackerapp.db.Statistics
+import id.fauzancode.runningtrackerapp.ui.viewmodels.HomeViewModel
+import id.fauzancode.runningtrackerapp.utils.TrackingUtils
+import java.lang.Math.round
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var homeAdapter: HomeAdapter
 
     //ini yang perlu km gunakan untuk request permission
     private val requestPermissionLauncher = registerForActivityResult(
@@ -55,6 +65,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     startActivity(intent)
                 }
             }
+
             else -> {
                 //All request are permitted
             }
@@ -66,6 +77,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
 
         requestPermissions()
+        setupRecyclerView()
+        subscribeToObservers()
 
         binding.apply {
             btnStartRun.setOnClickListener {
@@ -74,6 +87,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             btnSeeAll.setOnClickListener {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToStatisticsFragment())
+            }
+
+            btnProfile.setOnClickListener {
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment())
             }
         }
     }
@@ -91,6 +108,47 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 ACCESS_COARSE_LOCATION
             )
         )
+    }
+
+    private fun setupRecyclerView() {
+        homeAdapter = HomeAdapter()
+        binding.rvProgress.apply {
+            adapter = homeAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        }
+    }
+
+    private fun subscribeToObservers() {
+        val listStatistics = mutableListOf<Statistics>()
+        viewModel.totalTimeRun.observe(viewLifecycleOwner) {
+            it?.let {
+                val totalTimeRun = TrackingUtils.getFormattedStopWatchTime(it)
+                listStatistics.add(Statistics("Total Time", totalTimeRun))
+            }
+        }
+        viewModel.totalDistance.observe(viewLifecycleOwner) {
+            it?.let {
+                val km = it / 1000f
+                val totalDistance = Statistics("Total Distance", "${round(km * 10f) / 10f}")
+                listStatistics.add(totalDistance)
+            }
+        }
+        viewModel.totalAvgSpeed.observe(viewLifecycleOwner) {
+            it?.let {
+                val avgSpeedString = "${round(it * 10f) / 10f}"
+                val totalAvgSpeed = Statistics("Total Avg Speed", avgSpeedString)
+                listStatistics.add(totalAvgSpeed)
+            }
+        }
+        viewModel.totalCaloriesBurned.observe(viewLifecycleOwner) {
+            it?.let {
+                val totalCaloriesBurned = Statistics("Total Calories Burned", "$it")
+                listStatistics.add(totalCaloriesBurned)
+            }
+        }
+
+        homeAdapter.submitList(listStatistics)
     }
 
 }

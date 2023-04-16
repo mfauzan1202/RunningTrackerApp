@@ -16,16 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:theme="@style/ToolBarStyle">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_circle_button_gray"
-            android:padding="8dp"
-            android:src="@drawable/ic_menu" />
-
         <TextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
@@ -39,6 +29,7 @@
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -135,7 +126,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
-                android:layout_marginBottom="12dp"
                 android:elevation="2dp"
                 app:cardCornerRadius="20dp"
                 app:cardPreventCornerOverlap="false"
@@ -227,6 +217,7 @@
                 app:layout_constraintTop_toTopOf="@id/tv_todayProgress" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_statisticsFragment"
             app:destination="@id/statisticsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
@@ -27,4 +30,12 @@
         android:name="id.fauzancode.runningtrackerapp.ui.tracking.TrackingFragment"
         android:label="fragment_tracking"
         tools:layout="@layout/fragment_tracking" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="id.fauzancode.runningtrackerapp.ui.profile.ProfileFragment"
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

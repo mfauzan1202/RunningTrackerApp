@@ -28,6 +28,7 @@ import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_COLOR
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_WIDTH
 import id.fauzancode.runningtrackerapp.utils.TrackingUtils
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -43,8 +44,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
 
     private var curTimeInMillis = 0L
 
-    private var weight = 80f
-
+    @set:Inject
+    var weight = 80f
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTrackingBinding.bind(view)

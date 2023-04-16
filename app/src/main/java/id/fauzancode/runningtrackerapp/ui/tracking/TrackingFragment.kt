@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -11,11 +12,14 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.databinding.FragmentTrackingBinding
+import id.fauzancode.runningtrackerapp.db.Runs
 import id.fauzancode.runningtrackerapp.services.Polyline
 import id.fauzancode.runningtrackerapp.services.TrackingService
+import id.fauzancode.runningtrackerapp.ui.viewmodels.TrackingViewModel
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_PAUSE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_START_OR_RESUME_SERVICE
 import id.fauzancode.runningtrackerapp.utils.Constants.ACTION_STOP
@@ -23,10 +27,13 @@ import id.fauzancode.runningtrackerapp.utils.Constants.MAP_ZOOM
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_COLOR
 import id.fauzancode.runningtrackerapp.utils.Constants.POLYLINE_WIDTH
 import id.fauzancode.runningtrackerapp.utils.TrackingUtils
+import java.util.*
+import kotlin.math.round
 
 @AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallback {
 
+    private val viewModel: TrackingViewModel by viewModels()
     private var _binding: FragmentTrackingBinding? = null
     private val binding get() = _binding!!
     private var map: GoogleMap? = null
@@ -36,10 +43,17 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
 
     private var curTimeInMillis = 0L
 
+    private var weight = 80f
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTrackingBinding.bind(view)
         binding.apply {
+            btnFinishRun.setOnClickListener {
+                zoomToSeeWholeTrack()
+                endRunAndSaveToDb()
+            }
+
             mapView.onCreate(savedInstanceState)
             mapView.getMapAsync(this@TrackingFragment)
             addAllPolylines()
@@ -138,6 +152,47 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking), OnMapReadyCallbac
     private fun stopRun() {
         sendCommandToService(ACTION_STOP)
         findNavController().popBackStack()
+    }
+
+    private fun zoomToSeeWholeTrack() {
+        val bounds = TrackingUtils.getLatLngBounds(pathPoints)
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds,
+                binding.mapView.width,
+                binding.mapView.height,
+                (binding.mapView.height * 0.05f).toInt()
+            )
+        )
+    }
+
+    private fun endRunAndSaveToDb() {
+        map?.snapshot { bmp ->
+            var distanceInMeters = 0
+            for (polyline in pathPoints) {
+                distanceInMeters += TrackingUtils.calculatePolylineLength(polyline).toInt()
+            }
+            val avgSpeed = round((distanceInMeters / 1000f) / (curTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+            val dateTimeStamp = Calendar.getInstance().timeInMillis
+            val caloriesBurned = ((distanceInMeters / 1000f) * weight).toInt()
+            val run = Runs(
+                bmp,
+                dateTimeStamp,
+                avgSpeed.toLong(),
+                distanceInMeters,
+                curTimeInMillis.toFloat(),
+                caloriesBurned
+            )
+            viewModel.insertRun(run)
+            //make snackbar
+            Snackbar.make(
+                requireActivity().findViewById(android.R.id.content),
+                "Run saved successfully",
+                Snackbar.LENGTH_LONG
+            ).show()
+
+            stopRun()
+        }
     }
 
     private fun addAllPolylines() {

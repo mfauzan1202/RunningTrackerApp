@@ -19,6 +19,8 @@ class StatisticsViewModel @Inject constructor(
     private val runSortedByTimeInMillis = mainRepository.getAllRunsSortedByTimeInMillis()
     private val runSortedByAvgSpeed = mainRepository.getAllRunsSortedByAvgSpeed()
 
+    val runsSortedByDate = mainRepository.getAllRunsSortedByDate()
+
     val runs = MediatorLiveData<List<Runs>>()
 
     var sortType = SortType.DATE

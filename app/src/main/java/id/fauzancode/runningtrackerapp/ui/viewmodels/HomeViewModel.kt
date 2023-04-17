@@ -19,9 +19,6 @@ class HomeViewModel @Inject constructor(
     val totalDistance = mainRepository.getTotalDistance()
     val totalCaloriesBurned = mainRepository.getTotalCaloriesBurned()
     val totalAvgSpeed = mainRepository.getTotalAvgSpeed()
-
-    val runsSortedByDate = mainRepository.getAllRunsSortedByDate()
-
 //    fun getTotalStatistics() : LiveData<List<Statistics>> {
 //        val listStatistics = mutableListOf<Statistics>()
 //        val list = MutableLiveData<List<Statistics>>()

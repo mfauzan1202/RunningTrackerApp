@@ -1,17 +1,24 @@
 package id.fauzancode.runningtrackerapp.ui.statistics
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import dagger.hilt.android.AndroidEntryPoint
 import id.fauzancode.runningtrackerapp.R
 import id.fauzancode.runningtrackerapp.adapters.RunAdapter
 import id.fauzancode.runningtrackerapp.databinding.FragmentStatisticsBinding
 import id.fauzancode.runningtrackerapp.ui.viewmodels.StatisticsViewModel
+import id.fauzancode.runningtrackerapp.utils.CustomMarkerView
 import id.fauzancode.runningtrackerapp.utils.SortType
 
 @AndroidEntryPoint
@@ -28,6 +35,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         _binding = FragmentStatisticsBinding.bind(view)
         setupRecyclerView()
         subscribeToObservers()
+        setupBarChart()
 
         binding.apply {
             btnBack.setOnClickListener {
@@ -86,6 +94,48 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             it?.let {
                 runAdapter.submitList(it)
             }
+        }
+        viewModel.runsSortedByDate.observe(viewLifecycleOwner) {
+            it?.let {
+                val allAvgSpeeds = it.indices.map { i -> BarEntry(i.toFloat() , it[i].avgSpeedInKMH) }
+                val barDataSet = BarDataSet(allAvgSpeeds, "Avg speed over time").apply {
+                    valueTextColor = Color.BLACK
+                    color = ContextCompat.getColor(requireContext(), R.color.colorAccent)
+                }
+
+                binding.apply {
+                    barChart.data = BarData(barDataSet)
+                    barChart.marker = CustomMarkerView(it.reversed(), requireContext(), R.layout.marker_view)
+                    barChart.invalidate()
+                }
+            }
+        }
+    }
+
+    private fun setupBarChart() {
+        binding.barChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawLabels(false)
+            axisLineColor = Color.BLACK
+            textColor = Color.BLACK
+            setDrawGridLines(false)
+        }
+
+        binding.barChart.axisLeft.apply {
+            axisLineColor = Color.BLACK
+            textColor = Color.BLACK
+            setDrawGridLines(false)
+        }
+
+        binding.barChart.axisRight.apply {
+            axisLineColor = Color.BLACK
+            textColor = Color.BLACK
+            setDrawGridLines(false)
+        }
+
+        binding.barChart.apply {
+            description.text = "Avg speed over time"
+            legend.isEnabled = false
         }
     }
 }
